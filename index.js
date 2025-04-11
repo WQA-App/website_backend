@@ -24,19 +24,19 @@ app.get('/api/years', (req, res) => {
 
 // Get data for a given year
 app.get('/api/data/:year', (req, res) => {
-    const { year } = req.params;
-    const table = `water_quality_data_${year}`;
-  
-    const query = `SELECT * FROM \`${table}\` WHERE latitude IS NOT NULL AND longitude IS NOT NULL`;
-  
-    db.query(query, (err, results) => {
-      if (err) {
-        console.error('Error fetching data:', err);
-        return res.status(500).send('Error');
-      }
-      res.json(results);
-    });
+  const { year } = req.params;
+  const table = `water_quality_data_${year}`;
+
+  const query = `SELECT * FROM \`${table}\` WHERE latitude IS NOT NULL AND longitude IS NOT NULL`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching data:', err);
+      return res.status(500).send('Error');
+    }
+    res.json(results);
   });
+});
 
 app.get("/",(req,res)=>{
     res.send("I am working")
