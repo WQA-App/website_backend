@@ -1,46 +1,35 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db');
+const connectDB = require('./db');
+const addYearlyData = require('./Routes/addYearlyData.js');
+const getYears = require('./Routes/getYears.js')
+const getYearWiseData = require('./Routes/getYearWiseData.js')
+const bodyParser = require('body-parser')
 const app = express();
-const PORT = 3000;
+const PORT = 3005;
 
+connectDB();
+app.use(express.json());
 app.use(cors());
 
-app.get('/api/years', (req, res) => {
-  console.log("Reached backend");
-  const year = req.params.year;
-  const tableName = `water_quality_data_${year}`;
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded())
 
-  const query = `SELECT * FROM ${tableName} WHERE latitude IS NOT NULL AND longitude IS NOT NULL`;
+// parse application/json
+app.use(bodyParser.json())
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching data:', err);   
-      return res.status(500).send('Database error');
-    }
-    res.json(results);
-  });
-});
+//Save excel file in database
+app.use('/api', addYearlyData);
+
+//Get all years
+app.use('/api/years',getYears);
 
 // Get data for a given year
-app.get('/api/data/:year', (req, res) => {
-  const { year } = req.params;
-  const table = `water_quality_data_${year}`;
+app.use('/api/data',getYearWiseData)
 
-  const query = `SELECT * FROM \`${table}\` WHERE latitude IS NOT NULL AND longitude IS NOT NULL`;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching data:', err);
-      return res.status(500).send('Error');
-    }
-    res.json(results);
-  });
-});
-
-app.get("/",(req,res)=>{
-    res.send("I am working")
-})
+// app.get("/",(req,res)=>{
+//     res.send("I am working")
+// })
 
 app.listen(PORT, () => {
   console.log(`Backend server running at http://localhost:${PORT}`);
