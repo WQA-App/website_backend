@@ -6,7 +6,9 @@ const getYears = require('./Routes/getYears.js')
 const getYearWiseData = require('./Routes/getYearWiseData.js')
 const bodyParser = require('body-parser')
 const app = express();
-const PORT = 3005;
+require('dotenv').config();
+
+const PORT = process.env.PORT || 3000;
 
 connectDB();
 app.use(express.json());
